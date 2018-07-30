@@ -2,20 +2,20 @@
 
 function Get-Users {
 <#
-	.SYNOPSIS
-		Retrieve dynamics system users domain name.
-	.DESCRIPTION
-		Retrieve dynamics system users domain name.
-    .PARAMETER ServerUrl
-        The server url and the organization
-	.EXAMPLE
-		Get-Users -ServerUrl "http://yourcrmserver/CRM"
-	.NOTES
-		Nicolas Plourde
-		www.xrmmtl.com
-		github.com/nickpl
-		1.0 | 2018/07/26 | Nicolas Plourde
-			Initial Version
+.SYNOPSIS
+	Retrieve dynamics system users domain name.
+.DESCRIPTION
+	Retrieve dynamics system users domain name.
+.PARAMETER ServerUrl
+	The server url and the organization
+.EXAMPLE
+	Get-Users -ServerUrl "http://yourcrmserver/CRM"
+.NOTES
+	Nicolas Plourde
+	www.xrmmtl.com
+	github.com/nickpl
+	1.0 | 2018/07/26 | Nicolas Plourde
+		Initial Version
 #>
     param(
 		[string]$serverurl
@@ -33,22 +33,22 @@ function Get-Users {
 
 function Get-Adinfo {
 <#
-	.SYNOPSIS
-		Retrieve Active Directory information from Dynamics webservice using domain name
-	.DESCRIPTION
-		Retrieve Active Directory information from Dynamics webservice using a system user containing the domain name
-    .PARAMETER ServerUrl
-        The server url and the organization
-	.EXAMPLE
-		Get-Adinfo -user @{domainname:'domain\username'} -ServerUrl "http://yourcrmserver/CRM"
-	.EXAMPLE
-		Get-Users -ServerUrl "http://yourcrmserver/CRM" | foreach { Get-Adinfo $_ -ServerUrl "http://yourcrmserver/CRM" } 
-	.NOTES
-		Nicolas Plourde
-		www.xrmmtl.com
-		github.com/nickpl
-		1.0 | 2018/07/26 | Nicolas Plourde
-			Initial Version
+.SYNOPSIS
+	Retrieve Active Directory information from Dynamics webservice using domain name
+.DESCRIPTION
+	Retrieve Active Directory information from Dynamics webservice using a system user containing the domain name
+.PARAMETER ServerUrl
+	The server url and the organization
+.EXAMPLE
+	Get-Adinfo -user @{domainname:'domain\username'} -ServerUrl "http://yourcrmserver/CRM"
+.EXAMPLE
+	Get-Users -ServerUrl "http://yourcrmserver/CRM" | foreach { Get-Adinfo $_ -ServerUrl "http://yourcrmserver/CRM" } 
+.NOTES
+	Nicolas Plourde
+	www.xrmmtl.com
+	github.com/nickpl
+	1.0 | 2018/07/26 | Nicolas Plourde
+		Initial Version
 #>
 	[CmdletBinding()]
 	param(
@@ -99,22 +99,22 @@ $ad_request =
 
 function Set-User {
 <#
-	.SYNOPSIS
-		Update Dynamics system user informations using an object coming from UserManager webservice
-	.DESCRIPTION
-		Update Dynamics system user informations using an object coming from UserManager webservice
-    .PARAMETER Infos
-        An object containing both information from the user in Dynamics and from Active Directory. See Get-Adinfo.
-    .PARAMETER ServerUrl
-        The server url and the organization
-	.EXAMPLE
-		Get-Users -ServerUrl "http://yourcrmserver/CRM" | foreach { Get-Adinfo $_ -ServerUrl "http://yourcrmserver/CRM" | Set-User -ServerUrl $serverUrl "http://yourcrmserver/CRM" } 
-	.NOTES
-		Nicolas Plourde
-		www.xrmmtl.com
-		github.com/nickpl
-		1.0 | 2018/07/26 | Nicolas Plourde
-			Initial Version
+.SYNOPSIS
+	Update Dynamics system user informations using an object coming from UserManager webservice
+.DESCRIPTION
+	Update Dynamics system user informations using an object coming from UserManager webservice
+.PARAMETER Infos
+	An object containing both information from the user in Dynamics and from Active Directory. See Get-Adinfo.
+.PARAMETER ServerUrl
+	The server url and the organization
+.EXAMPLE
+	Get-Users -ServerUrl "http://yourcrmserver/CRM" | foreach { Get-Adinfo $_ -ServerUrl "http://yourcrmserver/CRM" | Set-User -ServerUrl $serverUrl "http://yourcrmserver/CRM" } 
+.NOTES
+	Nicolas Plourde
+	www.xrmmtl.com
+	github.com/nickpl
+	1.0 | 2018/07/26 | Nicolas Plourde
+		Initial Version
 #>
 	[CmdletBinding()]
 	param(
