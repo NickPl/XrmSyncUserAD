@@ -1,17 +1,4 @@
-﻿# This script was intended for Dynamics CRM 2016 on-premise.
-
-$serverUrl = "http://yourcrmserver/CRM";
-
-$ad_request = @'
-<?xml version="1.0" encoding="utf-8" ?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<soap:Body>
-		<RetrieveADUserProperties xmlns="http://schemas.microsoft.com/crm/2009/WebServices">
-			<domainAccountName>{0}</domainAccountName>
-		</RetrieveADUserProperties>
-	</soap:Body>
-</soap:Envelope>
-'@;
+# This script was intended for Dynamics CRM 2016 on-premise.
 
 function Get-Users {
 <#
@@ -19,8 +6,10 @@ function Get-Users {
 		Retrieve dynamics system users domain name.
 	.DESCRIPTION
 		Retrieve dynamics system users domain name.
+    .PARAMETER ServerUrl
+        The server url and the organization
 	.EXAMPLE
-		Get-Users
+		Get-Users -ServerUrl "http://yourcrmserver/CRM"
 	.NOTES
 		Nicolas Plourde
 		www.xrmmtl.com
@@ -28,6 +17,9 @@ function Get-Users {
 		1.0 | 2018/07/26 | Nicolas Plourde
 			Initial Version
 #>
+    param(
+		[string]$serverurl
+	)
 	$headers = @{
 		"Accept"="application/json";
 		"Content-Type"="application/json; charset=utf-8";
@@ -45,10 +37,12 @@ function Get-Adinfo {
 		Retrieve Active Directory information from Dynamics webservice using domain name
 	.DESCRIPTION
 		Retrieve Active Directory information from Dynamics webservice using a system user containing the domain name
+    .PARAMETER ServerUrl
+        The server url and the organization
 	.EXAMPLE
-		Get-Adinfo -user @{domainname:'domain\username'}
+		Get-Adinfo -user @{domainname:'domain\username'} -ServerUrl "http://yourcrmserver/CRM"
 	.EXAMPLE
-		Get-Users | foreach { Get-Adinfo $_ } 
+		Get-Users -ServerUrl "http://yourcrmserver/CRM" | foreach { Get-Adinfo $_ -ServerUrl "http://yourcrmserver/CRM" } 
 	.NOTES
 		Nicolas Plourde
 		www.xrmmtl.com
@@ -59,8 +53,21 @@ function Get-Adinfo {
 	[CmdletBinding()]
 	param(
 		[Parameter(ValueFromPipeline)]
-		$user
+		$user,
+        [string]$serverurl
 	)
+
+$ad_request = 
+@"
+<?xml version="1.0" encoding="utf-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<RetrieveADUserProperties xmlns="http://schemas.microsoft.com/crm/2009/WebServices">
+			<domainAccountName>{0}</domainAccountName>
+		</RetrieveADUserProperties>
+	</soap:Body>
+</soap:Envelope>
+"@;
 
 	$userManagerEndPoint = "$serverurl/AppWebServices/UserManager.asmx";
 
@@ -96,8 +103,12 @@ function Set-User {
 		Update Dynamics system user informations using an object coming from UserManager webservice
 	.DESCRIPTION
 		Update Dynamics system user informations using an object coming from UserManager webservice
+    .PARAMETER Infos
+        An object containing both information from the user in Dynamics and from Active Directory. See Get-Adinfo.
+    .PARAMETER ServerUrl
+        The server url and the organization
 	.EXAMPLE
-		Get-Users | foreach { Get-Adinfo $_ | Set-User } 
+		Get-Users -ServerUrl "http://yourcrmserver/CRM" | foreach { Get-Adinfo $_ -ServerUrl "http://yourcrmserver/CRM" | Set-User -ServerUrl $serverUrl "http://yourcrmserver/CRM" } 
 	.NOTES
 		Nicolas Plourde
 		www.xrmmtl.com
@@ -108,11 +119,12 @@ function Set-User {
 	[CmdletBinding()]
 	param(
 		[Parameter(ValueFromPipeline)]
-		$infos
+		$infos,
+        [string]$serverurl
 	)
 
 	if($infos -eq $null)
-	{ return; }
+	{ return; }
 
 	try
 	{
@@ -145,4 +157,5 @@ function Set-User {
 	}   
 }
 
-Get-Users | foreach { Get-Adinfo $_ | Set-User } 
+$serverUrl = "http://yourcrmserver/CRM";
+Get-Users -ServerUrl $serverUrl | foreach { Get-Adinfo $_ -ServerUrl $serverUrl | Set-User -ServerUrl $serverUrl } 
