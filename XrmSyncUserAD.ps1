@@ -27,7 +27,7 @@ function Get-Users {
 		"OData-Version"="4.0";
 	};
 
-	$users = Invoke-WebRequest -Uri "$serverurl/api/data/v8.2/systemusers/?`$select=domainname&`$filter=isdisabled eq false and domainname ne ''" -Method GET -Headers $headers -UseDefaultCredentials
+	$users = Invoke-WebRequest -Uri "$serverurl/api/data/v8.2/systemusers/?`$select=domainname&`$filter=isdisabled eq false and domainname ne ''" -Method GET -Headers $headers -UseDefaultCredentials -UseBasicParsing;
 	return (ConvertFrom-Json $users.Content).value;
 }
 
@@ -80,7 +80,7 @@ $ad_request =
 		"SOAPAction"="http://schemas.microsoft.com/crm/2009/WebServices/RetrieveADUserProperties";
 	};
 
-	$adinfo = Invoke-WebRequest -Uri $userManagerEndPoint -Method POST -Headers $headers -Body $request -UseDefaultCredential;
+	$adinfo = Invoke-WebRequest -Uri $userManagerEndPoint -Method POST -Headers $headers -Body $request -UseDefaultCredential -UseBasicParsing;
 
 	[xml]$xml = $adinfo.Content;
 	[xml]$xmlContent = $xml.GetElementsByTagName('RetrieveADUserPropertiesResult').'#text';
@@ -140,7 +140,7 @@ function Set-User {
 			"OData-MaxVersion"="4.0";
 			"OData-Version"="4.0";
 		};
-		$result = Invoke-WebRequest -Uri "$serverurl/api/data/v8.2/systemusers($userid)" -Method PATCH -Headers $headers -Body $adjson -UseDefaultCredentials
+		$result = Invoke-WebRequest -Uri "$serverurl/api/data/v8.2/systemusers($userid)" -Method PATCH -Headers $headers -Body $adjson -UseDefaultCredentials -UseBasicParsing;
 		$code = $result.StatusCode;
 
 		if($result.StatusCode -eq 204) {
